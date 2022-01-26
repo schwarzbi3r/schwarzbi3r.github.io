@@ -50,12 +50,12 @@ Now it should become more clear how this got serialized. `02 00 00 00` is a `u32
 
 Clicking the byte `0x05` at offset 0x04, we can see it gives us the key [`PwDiXFxQsGra4sFFTT8r1QWRMd4vfumiWC1jfWNfdYT`](https://schwarzbi3r.github.io/solana-hack-n-hex/#/mainnet-beta/account/PwDiXFxQsGra4sFFTT8r1QWRMd4vfumiWC1jfWNfdYT).
 
-![bpf-loader-program](/2022-01-26-solana-serialization/bpf-loader-program-hex.png)
+![bpf-loader-program](../../static/2022-01-26-solana-serialization/bpf-loader-program-hex.png)
 
 Then we pull up the program data at [`PwDiXFxQsGra4sFFTT8r1QWRMd4vfumiWC1jfWNfdYT`](https://schwarzbi3r.github.io/solana-hack-n-hex/#/mainnet-beta/account/PwDiXFxQsGra4sFFTT8r1QWRMd4vfumiWC1jfWNfdYT):
 
 
-![bpf-loader-program-data](/2022-01-26-solana-serialization/bpf-loader-program-data-hex.png)
+![bpf-loader-program-data](../../static/2022-01-26-solana-serialization/bpf-loader-program-data-hex.png)
 
 And while it's a whopping 694k of program data, we just want to pay attention to the header, which is defined in the enum as:
 
