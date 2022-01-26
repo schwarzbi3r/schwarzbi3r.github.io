@@ -46,7 +46,7 @@ pub enum UpgradeableLoaderState {
 }
 ```
 
-Now it should become more clear how this got serialized. `02 00 00 00` is a u32 denoting the 3rd (starting from 0x00) type in the enum, `Program`, which contains a Public key, which is [u8; 32] and starts from the 0x05.
+Now it should become more clear how this got serialized. `02 00 00 00` is a `u32` denoting the 3rd (starting from 0x00) type in the enum, `Program`, which contains a Public key, which is `[u8; 32]` and starts from the 0x05.
 
 Clicking the byte `0x05` at offset 0x04, we can see it gives us the key [`PwDiXFxQsGra4sFFTT8r1QWRMd4vfumiWC1jfWNfdYT`](https://schwarzbi3r.github.io/solana-hack-n-hex/#/mainnet-beta/account/PwDiXFxQsGra4sFFTT8r1QWRMd4vfumiWC1jfWNfdYT).
 
@@ -72,7 +72,7 @@ And while it's a whopping 694k of program data, we just want to pay attention to
 ```
 
 
-So as expected, we have `03 00 00 00` denoting the 4th enum (ProgramData), followed by a u64 slot of `D1 12 F7 06 00 00 00 00` or 116855505 in base 10. Then we have a value of '01' which implies the 2nd enum in Option (Some), and we can verify that from the std::option code in rust, which is:
+So as expected, we have `03 00 00 00` denoting the 4th enum (ProgramData), followed by a `u64` slot of `D1 12 F7 06 00 00 00 00` or 116855505 in base 10. Then we have a value of '01' which implies the 2nd enum in Option (Some), and we can verify that from the std::option code in rust, which is:
 
 ```rust
 pub enum Option<T> {
@@ -81,7 +81,7 @@ pub enum Option<T> {
 }
 ```
 
-And finally, we have our 'upgrade_authority_address' which is a [u8; 32] of [`AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt`](https://schwarzbi3r.github.io/solana-hack-n-hex/#/mainnet-beta/account/AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt)
+And finally, we have our 'upgrade_authority_address' which is a `[u8; 32]` of [`AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt`](https://schwarzbi3r.github.io/solana-hack-n-hex/#/mainnet-beta/account/AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt)
 
 This all sounds reasonable, but can we replicate this serialization in Rust? It's actually pretty easy. It uses the libraries 'serde' and 'bincode' to do the actual serialization and deserialization, so with just a quick implementation of the enum along with a small test, we can reproduce the same data that we see showing up in Solana.
 
