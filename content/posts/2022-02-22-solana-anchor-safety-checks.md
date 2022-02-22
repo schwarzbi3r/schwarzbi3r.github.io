@@ -1,10 +1,10 @@
 ---
 title: "Anchor/Solana safety check you get for free"
-date: 2022-02-22T00:00:00
+date: 2022-02-21T00:00:00
 draft: false
 ---
 
-When you're writing any Solana contract it's easy to make a costly mistake. In fact, coming as a developer from a typical backend or frontend engineering role, it feels a bit like going back to writing C. Mistakes are easy to make, easy to miss, and easy to misjudge. Rust is a language that sells safety as a feature, but when it comes to smart contracts, it's not the null pointer that's going to kill you, it's forgetting to check an input, something that Rust can't solve with the borrow checker.
+When you're writing any Solana contract, it's easy to make a costly mistake. In fact, coming as a developer from a typical backend or frontend engineering role, it feels a bit like going back to writing C. Mistakes are easy to make, easy to miss, and easy to misjudge. Rust is a language that sells safety as a feature, but when it comes to smart contracts, it's not the null pointer that's going to kill you, it's forgetting to check an input, something that Rust can't solve with the borrow checker.
 
 One of the things I like about the Anchor project is their focus on putting a safety net around some of the more common actions a smart contract may make.
 
