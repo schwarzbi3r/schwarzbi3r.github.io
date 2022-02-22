@@ -14,7 +14,7 @@ In this post, I want to look at two common mistakes and the way Anchor tries to 
 
 In this case, our contract is going to transfer some funds based on the data in a 'config' account which specifies the authority/admin of the funds. See Neodyme's demonstration code below:
 
-```
+```rust
 fn withdraw_token_restricted(program_id: &Pubkey, accounts: &[AccountInfo], amount: u64) -> ProgramResult {
     let account_iter = &mut accounts.iter();
     let vault = next_account_info(account_iter)?;
@@ -39,7 +39,7 @@ What may or may not immediately stand out is the `config.admin != admin.pubkey()
 
 The solution is to check the owner of the account, which is a field you'll find on every Solana account. If you were doing this in vanilla Solana it would look like:
 
-```
+```rust
 if config.owner != program_id {
         return Err(ProgramError::InvalidConfigAccount);
     }
@@ -51,7 +51,7 @@ if config.owner != program_id {
 
 In most cases, you'd want to do this for every program account. But in Anchor, this check is performed by default on all Accounts (Anchor's rust representation of a solana account).
 
-```
+```rust
 #[account]
 pub struct Config {
     pub admin: Pubkey,
@@ -66,7 +66,7 @@ pub struct Initialize<'info> {
 
 In the above example, Anchor has been told about what will be passed to out `Initialize` function (a Signer account, and a Config Account), which will then be loaded through it's [Account struct](https://github.com/project-serum/anchor/blob/master/lang/src/accounts/account.rs#L249):
 
-```
+```rust
 pub fn try_from(info: &AccountInfo<'a>) -> Result<Account<'a, T>, ProgramError> {
         if info.owner == &system_program::ID && info.lamports() == 0 {
             return Err(ErrorCode::AccountNotInitialized.into());
@@ -88,7 +88,8 @@ This is another easy to miss gotcha that Anchor solves rather easily.
 
 Lets look again at Neodyme's excellent example:
 
-```
+```rust
+pub fn try_from(info: &AccountInfo<'a>) -> Result<Account<'a, T>, ProgramError> {
 fn update_admin(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let account_iter = &mut accounts.iter();
     let config = ConfigAccount::unpack(next_account_info(account_iter)?)?;
@@ -114,7 +115,7 @@ In this case, we haven't checked that the `admin` account passed to us is a sign
 And now, let's look at how Anchor resolves it. When we specify the list of accounts we expect to be passed to our function, we can actually call out 'admin' as a Signer. This is the same code from the above example; we haven't had to add anything:
 
 
-```
+```rust
 #[derive(Accounts)]
 pub struct Initialize<'info> {
     pub admin: Signer<'info>,
@@ -124,7 +125,7 @@ pub struct Initialize<'info> {
 
 The magic happens when Anchor goes to [deserialize the account before passing it along to our contract function](https://github.com/project-serum/anchor/blob/master/lang/src/accounts/signer.rs#L51):
 
-```
+```rust
 impl<'info> Signer<'info> {
     fn new(info: AccountInfo<'info>) -> Signer<'info> {
         Self { info }
