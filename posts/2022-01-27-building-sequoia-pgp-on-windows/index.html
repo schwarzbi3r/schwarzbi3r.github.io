@@ -1,0 +1,82 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Building Sequoia PGP on Windows - SchwarzBier</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="This is more for my own notes, but if you&rsquo;re new to Windows development, it&rsquo;s easy to get lost in the mix of MSVC and &lsquo;mingw&rsquo;. For the purposes of this post, the goal will be to build Sequoia PGP, a rust PGP implementation, in Windows using the &lsquo;mingw&rsquo; environment (which uses the Nettles cryptography library vs Windows Cryptography).
+Summary of the steps  Install Rustup using the official package Install the windows-gnu toolchain and set it to default Install MSYS2 Install the required packages from MSYS2 (clang, nettles, pkg-config) Update PATH Build using cargo  Installation steps Install rustup Use the official package at rustup.">
+<meta property="og:image" content>
+<meta property="og:title" content="Building Sequoia PGP on Windows">
+<meta property="og:description" content="This is more for my own notes, but if you&rsquo;re new to Windows development, it&rsquo;s easy to get lost in the mix of MSVC and &lsquo;mingw&rsquo;. For the purposes of this post, the goal will be to build Sequoia PGP, a rust PGP implementation, in Windows using the &lsquo;mingw&rsquo; environment (which uses the Nettles cryptography library vs Windows Cryptography).
+Summary of the steps  Install Rustup using the official package Install the windows-gnu toolchain and set it to default Install MSYS2 Install the required packages from MSYS2 (clang, nettles, pkg-config) Update PATH Build using cargo  Installation steps Install rustup Use the official package at rustup.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://SchwarzBi3r.github.io/posts/2022-01-27-building-sequoia-pgp-on-windows/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-01-27T15:57:21-05:00">
+<meta property="article:modified_time" content="2022-01-27T15:57:21-05:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Building Sequoia PGP on Windows">
+<meta name=twitter:description content="This is more for my own notes, but if you&rsquo;re new to Windows development, it&rsquo;s easy to get lost in the mix of MSVC and &lsquo;mingw&rsquo;. For the purposes of this post, the goal will be to build Sequoia PGP, a rust PGP implementation, in Windows using the &lsquo;mingw&rsquo; environment (which uses the Nettles cryptography library vs Windows Cryptography).
+Summary of the steps  Install Rustup using the official package Install the windows-gnu toolchain and set it to default Install MSYS2 Install the required packages from MSYS2 (clang, nettles, pkg-config) Update PATH Build using cargo  Installation steps Install rustup Use the official package at rustup.">
+<link href=https://SchwarzBi3r.github.io/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://SchwarzBi3r.github.io/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://SchwarzBi3r.github.io>SchwarzBier</a>
+</div>
+<nav>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>Building Sequoia PGP on Windows</h1>
+<div class=meta>Posted on Jan 27, 2022</div>
+</div>
+<section class=body>
+<p>This is more for my own notes, but if you&rsquo;re new to Windows development, it&rsquo;s easy to get lost in the mix of MSVC and &lsquo;mingw&rsquo;. For the purposes of this post, the goal will be to build Sequoia PGP, a rust PGP implementation, in Windows using the &lsquo;mingw&rsquo; environment (which uses the Nettles cryptography library vs Windows Cryptography).</p>
+<h2 id=summary-of-the-steps>Summary of the steps</h2>
+<ul>
+<li>Install Rustup using the official package</li>
+<li>Install the windows-gnu toolchain and set it to default</li>
+<li>Install MSYS2</li>
+<li>Install the required packages from MSYS2 (clang, nettles, pkg-config)</li>
+<li>Update PATH</li>
+<li>Build using cargo</li>
+</ul>
+<h2 id=installation-steps>Installation steps</h2>
+<h3 id=install-rustup>Install rustup</h3>
+<p>Use the official package at <a href=https://rustup.rs/>rustup.rs</a></p>
+<h3 id=install-the-windows-gnu-toolchain>Install the Windows GNU toolchain</h3>
+<p>You could have done this during the installation of rustup, but for clarity, if you went with the default settings, it could be installed separately:</p>
+<p><code>rustup toolchain install stable-x86_64-pc-windows-gnu</code></p>
+<p>This default to this toolchain:<br>
+<code>rustup default stable-x86_64-pc-windows-gnu</code></p>
+<h3 id=install-msys2>Install MSYS2</h3>
+<p>Hop over to <a href=https://www.msys2.org/>MSYS2.org</a> and follow the instructions there.</p>
+<h3 id=install-the-required-packages-from-msys2>Install the required packages from MSYS2</h3>
+<p><code>pacman -S mingw-w64-x86_64-clang mingw-w64-x86_64-pkg-config mingw-w64-x86_64-nettle</code></p>
+<p>Alternatively, install &lsquo;pacboy&rsquo; which gets rid of the &lsquo;mingw-w64-x86_64&rsquo; mess:<br>
+<code>pacman -S pactools</code><br>
+<code>pacboy -S clang pkg-config nettle</code></p>
+<p>Make sure that you update the path (Assumes you&rsquo;re in Powershell):<br>
+<code>$env:Path += ';C:\msys64\mingw64\bin'</code></p>
+<p>This is required because the build process will need to be able to find &lsquo;cc.exe&rsquo; in the path.</p>
+<h2 id=build-sequoia>Build Sequoia</h2>
+<p>Then run <code>cargo build</code> and that should be it.</p>
+<h2 id=resources-for-this-post>Resources for this post</h2>
+<ul>
+<li><a href=https://stackoverflow.com/questions/47379214/step-by-step-instruction-to-install-rust-and-cargo-for-mingw-with-msys2>Stackoverflow about nettles and mingw</a></li>
+<li><a href=https://stackoverflow.com/questions/47379214/step-by-step-instruction-to-install-rust-and-cargo-for-mingw-with-msys2>Sequoia Windows build instructions</a></li>
+</ul>
+</section>
+<div class=post-tags>
+</div>
+</article>
+</main>
+<footer>
+<hr>⚡️
+2022 Schwarzbier | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Benchmarking Solana programs compute units - SchwarzBier</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Or, why you shouldn&rsquo;t log a public key One of the limitations of smart contract development is that you typically have some steep constraints on the resources your contract can use during execution. One of those constraints in nearly every runtime is a limitation on the number of CPU cycles you can use. In the Solana world, these are represented as &lsquo;compute units&rsquo;.
+Not only is there a hard limit (200k), but there&rsquo;s also a cost associated with them, similar to how gas fees work in the Ethereum world.">
+<meta property="og:image" content>
+<meta property="og:title" content="Benchmarking Solana programs compute units">
+<meta property="og:description" content="Or, why you shouldn&rsquo;t log a public key One of the limitations of smart contract development is that you typically have some steep constraints on the resources your contract can use during execution. One of those constraints in nearly every runtime is a limitation on the number of CPU cycles you can use. In the Solana world, these are represented as &lsquo;compute units&rsquo;.
+Not only is there a hard limit (200k), but there&rsquo;s also a cost associated with them, similar to how gas fees work in the Ethereum world.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://SchwarzBi3r.github.io/posts/2022-03-09-solana-compute-units-benchmark/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-03-09T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-03-09T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Benchmarking Solana programs compute units">
+<meta name=twitter:description content="Or, why you shouldn&rsquo;t log a public key One of the limitations of smart contract development is that you typically have some steep constraints on the resources your contract can use during execution. One of those constraints in nearly every runtime is a limitation on the number of CPU cycles you can use. In the Solana world, these are represented as &lsquo;compute units&rsquo;.
+Not only is there a hard limit (200k), but there&rsquo;s also a cost associated with them, similar to how gas fees work in the Ethereum world.">
+<link href=https://SchwarzBi3r.github.io/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://SchwarzBi3r.github.io/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://SchwarzBi3r.github.io>SchwarzBier</a>
+</div>
+<nav>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>Benchmarking Solana programs compute units</h1>
+<div class=meta>Posted on Mar 9, 2022</div>
+</div>
+<section class=body>
+<h1 id=or-why-you-shouldnt-log-a-public-key>Or, why you shouldn&rsquo;t log a public key</h1>
+<p>One of the limitations of smart contract development is that you typically have some steep constraints on the resources your contract can use during execution. One of those constraints in nearly every runtime is a limitation on the number of CPU cycles you can use. In the Solana world, these are represented as &lsquo;compute units&rsquo;.</p>
+<p>Not only is there a hard limit (200k), but there&rsquo;s also a cost associated with them, similar to how gas fees work in the Ethereum world. It&rsquo;s easy to get down the road on your contract development only to realize you&rsquo;re using a larger number of compute units than you would have expected, or worse you&rsquo;re near or already over the hard limit.</p>
+<p>There&rsquo;s no easy answer to avoiding this problem, but like any good problem, you can&rsquo;t fix what you can&rsquo;t measure. This short article will go through the basics of measuring compute unit usage in Solana, and show a couple examples of seemingly innocuous lines that result in larger than expected compute usage.</p>
+<h2 id=sol_log_compute_units>sol_log_compute_units</h2>
+<p>By default, every Solana transaction returns a set of &lsquo;logs&rsquo; including the total number of compute units used. It looks something like this:</p>
+<pre tabindex=0><code>&quot;Program Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS consumed 25938 of 200000 compute units&quot;,
+&quot;Program Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS success&quot;
+</code></pre><p>And while this is really useful information, what we really want is to break this down further so we can see where these compute units are really getting used. Solana gives us a tool to use for this, which is an instruction to output the current compute unit consumption in the logs.</p>
+<p>In practice it&rsquo;s as simple as wrapping a section of code in <code>solana_program::log::sol_log_compute_units()</code>, which will log out the current number of units remaining.</p>
+<p>For example:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust>solana_program::log::sol_log_compute_units();
+solana_program::pubkey::Pubkey::find_program_address(<span style=color:#f92672>&amp;</span>[<span style=color:#e6db74>b&#34;foo&#34;</span>],<span style=color:#f92672>&amp;</span>ctx.accounts.signer.key());
+solana_program::log::sol_log_compute_units();
+</code></pre></div><p>Which will give you something like this in the transaction logs:</p>
+<pre tabindex=0><code>Program consumption: 198831 units remaining
+Program consumption: 194243 units remaining
+</code></pre><p>So, roughly 4400 compute units to find a PDA (note, this is acutally variable in practice due to the non-deterministic behavior of find_program_address and bumps - see: <a href=https://schwarzbi3r.github.io/posts/2022-03-04-bump-distribution/>https://schwarzbi3r.github.io/posts/2022-03-04-bump-distribution</a>)</p>
+<p>And it&rsquo;s as simple as that. If you&rsquo;re writing tests on the Javascript side of things, I recommend taking a look at a project I put together, <a href=https://github.com/schwarzbi3r/sol_log_bench><code>sol_log_bench</code></a>, which allows you to set multiple benchmarks in a program and report the usage on the test page, vs having to comb through logs and eyeball the usage.</p>
+<h2 id=some-surprisingly-costly-instructions>Some surprisingly costly instructions</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust>msg<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;Pubkey: {}&#34;</span>, pubkey.to_string());
+</code></pre></div><p>This one caught me off guard, but it shouldn&rsquo;t have. It&rsquo;s taking a public key and turning it into a Base58 representation, which is actually pretty costly the way it works today. And it&rsquo;s easy to miss it because it&rsquo;s a log line, but it&rsquo;s still executed by the Solana, so it&rsquo;s still using up your compute units. Just how costly is it? It uses of 12,000 units, or 5% of your total limit in one log line.</p>
+<p>The same applies to creating a Publickey from a string. Sometimes you&rsquo;ll see something like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> admin_pub_key <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> Pubkey::from_str(<span style=color:#e6db74>&#34;DGqXoguiJnAy8ExJe9NuZpWrnQMCV14SdEdiMEdCfpmB&#34;</span>)
+</code></pre></div><p>This uses close to 20,000 compute units. You can imagine what would happen if you decided to loop through a list of base58 encoded accounts.</p>
+<p>The answer, in this case, is to just use the <code>pubkey!</code> macro.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> admin_pub_key <span style=color:#f92672>=</span> pubkey<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;DGqXoguiJnAy8ExJe9NuZpWrnQMCV14SdEdiMEdCfpmB&#34;</span>)
+</code></pre></div><p>Because the translation is done at compile time via the macro, you&rsquo;re now looking at less than 25 compute units for the same line of code.</p>
+<p>I&rsquo;m sure there are plenty of other costly instructions, but this should hopefully make you realize how easy it is to benchmark sections of your Solana program.</p>
+</section>
+<div class=post-tags>
+</div>
+</article>
+</main>
+<footer>
+<hr>⚡️
+2022 Schwarzbier | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+</div>
+</body>
+</html>

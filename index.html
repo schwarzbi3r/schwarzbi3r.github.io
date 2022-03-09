@@ -1,0 +1,81 @@
+<!doctype html><html>
+<head>
+<meta name=generator content="Hugo 0.91.2">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>SchwarzBier | Home </title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content>
+<meta property="og:image" content>
+<link rel=alternate type=application/rss+xml href=https://SchwarzBi3r.github.io/index.xml title=SchwarzBier>
+<meta property="og:title" content="SchwarzBier">
+<meta property="og:description" content>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://SchwarzBi3r.github.io/">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="SchwarzBier">
+<meta name=twitter:description content>
+<link href=https://SchwarzBi3r.github.io/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://SchwarzBi3r.github.io/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content>
+<header>
+<div class=main>
+<a href=https://SchwarzBi3r.github.io>SchwarzBier</a>
+</div>
+<nav>
+</nav>
+</header>
+<main class=list>
+<div class=site-description></div>
+<section class=list-item>
+<h1 class=title><a href=/posts/2022-03-09-solana-compute-units-benchmark/>Benchmarking Solana programs compute units</a></h1>
+<time>Mar 9, 2022</time>
+<br><div class=description>
+Or, why you shouldn&rsquo;t log a public key One of the limitations of smart contract development is that you typically have some steep constraints on the resources your contract can use during execution. One of those constraints in nearly every runtime is a limitation on the number of CPU cycles you can use. In the Solana world, these are represented as &lsquo;compute units&rsquo;.
+Not only is there a hard limit (200k), but there&rsquo;s also a cost associated with them, similar to how gas fees work in the Ethereum world.&mldr;
+</div>
+<a href=/posts/2022-03-09-solana-compute-units-benchmark/>Read more ⟶</a>
+</section>
+<section class=list-item>
+<h1 class=title><a href=/posts/2022-03-04-bump-distribution/>Bump distribution of findProgramAddress</a></h1>
+<time>Mar 4, 2022</time>
+<br><div class=description>
+There&rsquo;s some frequent misunderstanding when it comes to PDA&rsquo;s on Solana, starting with the &lsquo;bump&rsquo; value.
+First, let&rsquo;s look at what makes up a PDA. A PDA, or Program Derived Address, is an address on Solana that satifies two requirements.
+&ldquo;Program address must not lie on the ed25519 curve to ensure there is no associated private key&rdquo; - This means that there&rsquo;s no corresponding private key for the public address; no one will ever be able to sign a transaction with this key.&mldr;
+</div>
+<a href=/posts/2022-03-04-bump-distribution/>Read more ⟶</a>
+</section>
+<section class=list-item>
+<h1 class=title><a href=/posts/2022-02-22-solana-anchor-safety-checks/>Anchor/Solana safety check you get for free</a></h1>
+<time>Feb 21, 2022</time>
+<br><div class=description>
+When you&rsquo;re writing any Solana contract, it&rsquo;s easy to make a costly mistake. In fact, coming as a developer from a typical backend or frontend engineering role, it feels a bit like going back to writing C. Mistakes are easy to make, easy to miss, and easy to misjudge. Rust is a language that sells safety as a feature, but when it comes to smart contracts, it&rsquo;s not the null pointer that&rsquo;s going to kill you, it&rsquo;s forgetting to check an input, something that Rust can&rsquo;t solve with memory safety.&mldr;
+</div>
+<a href=/posts/2022-02-22-solana-anchor-safety-checks/>Read more ⟶</a>
+</section>
+<section class=list-item>
+<h1 class=title><a href=/posts/2022-01-27-building-sequoia-pgp-on-windows/>Building Sequoia PGP on Windows</a></h1>
+<time>Jan 27, 2022</time>
+<br><div class=description>
+This is more for my own notes, but if you&rsquo;re new to Windows development, it&rsquo;s easy to get lost in the mix of MSVC and &lsquo;mingw&rsquo;. For the purposes of this post, the goal will be to build Sequoia PGP, a rust PGP implementation, in Windows using the &lsquo;mingw&rsquo; environment (which uses the Nettles cryptography library vs Windows Cryptography).
+Summary of the steps Install Rustup using the official package Install the windows-gnu toolchain and set it to default Install MSYS2 Install the required packages from MSYS2 (clang, nettles, pkg-config) Update PATH Build using cargo Installation steps Install rustup Use the official package at rustup.&mldr;
+</div>
+<a href=/posts/2022-01-27-building-sequoia-pgp-on-windows/>Read more ⟶</a>
+</section>
+<section class=list-item>
+<h1 class=title><a href=/posts/2022-01-26-solana-serialization/>Playing with Solana Serialization</a></h1>
+<time>Jan 26, 2022</time>
+<br><div class=description>
+While exploring Solana, I wanted to get a better handle on how Solana serializes its own data. In order to do this I built a tool to quickly look at data on an account. Normally, consumers would have the RPC server parse the account data into its relevant fields. In my case, I&rsquo;m looking at the raw data and ignoring any parsing in order to better understand the serialization handling.&mldr;
+</div>
+<a href=/posts/2022-01-26-solana-serialization/>Read more ⟶</a>
+</section>
+</main>
+<footer>
+<hr>⚡️
+2022 Schwarzbier | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+</div>
+</body>
+</html>
