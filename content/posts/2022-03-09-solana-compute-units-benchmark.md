@@ -1,5 +1,5 @@
 ---
-title: "Solana compute units benchmark"
+title: "Benchmarking Solana programs compute units"
 date: 2022-03-09T00:00:00
 draft: false
 ---
